@@ -57,7 +57,6 @@ uint8_t eepromDataReadBack[4];
 uint8_t IOExpdrDataReadBack;
 uint8_t IOExpdrDataWrite = 0b01010101;
 
-int count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -126,30 +125,78 @@ int main(void)
 		{
 			IOExpdrExampleReadFlag = 1;
 			IOExpdrExampleWriteFlag = 1;
-			count += 1;
 		}
 
-		SwitchStateBB[1] = SwitchStateBB[0];
 		IOExpenderReadPinA(&IOExpdrDataReadBack);
 		IOExpenderWritePinB(IOExpdrDataWrite);
 
 		// LED 2 broken >> use LED 5-8 instead >> swap wire
-		if (IOExpdrDataReadBack == 0b11110111)				//switch 1 LED 1
+		if (IOExpdrDataReadBack == 0b11110111)			//switch 1 LED 1
 		{
 			IOExpdrDataWrite = 0b01110000;
 		}
-		else if (IOExpdrDataReadBack == 0b11111101)			//switch 2 LED 2
+		if (IOExpdrDataReadBack == 0b11111011)			//switch 2 LED 2
 		{
 			IOExpdrDataWrite = 0b10110000;
 		}
-		else if (IOExpdrDataReadBack == 0b11111011)			//switch 3 LED 3
+		if (IOExpdrDataReadBack == 0b11111101)			//switch 3 LED 3
 		{
 			IOExpdrDataWrite = 0b11010000;
 		}
-		else if (IOExpdrDataReadBack == 0b11111110)			//switch 4 LED 4
+		if (IOExpdrDataReadBack == 0b11111110)			//switch 4 LED 4
 		{
 			IOExpdrDataWrite = 0b11100000;
 		}
+		if (IOExpdrDataReadBack == 0b11110011)
+		{
+			IOExpdrDataWrite = 0b00110000;
+		}
+		if (IOExpdrDataReadBack == 0b11111001)
+		{
+			IOExpdrDataWrite = 0b10010000;
+		}
+		if (IOExpdrDataReadBack == 0b11110001)
+		{
+			IOExpdrDataWrite = 0b00010000;
+		}
+		if (IOExpdrDataReadBack == 0b11110101)
+		{
+			IOExpdrDataWrite = 0b01010000;
+		}
+		if (IOExpdrDataReadBack == 0b11110110)
+		{
+			IOExpdrDataWrite = 0b01100000;
+		}
+		if (IOExpdrDataReadBack == 0b11110000)
+		{
+			IOExpdrDataWrite = 0b00000000;
+		}
+		if (IOExpdrDataReadBack == 0b11110010)
+		{
+			IOExpdrDataWrite = 0b00100000;
+		}
+		if (IOExpdrDataReadBack == 0b11110100)
+		{
+			IOExpdrDataWrite = 0b01000000;
+		}
+		if (IOExpdrDataReadBack == 0b11111000)
+		{
+			IOExpdrDataWrite = 0b10000000;
+		}
+		if (IOExpdrDataReadBack == 0b11111010)
+		{
+			IOExpdrDataWrite = 0b10100000;
+		}
+		if (IOExpdrDataReadBack == 0b11111100)
+		{
+			IOExpdrDataWrite = 0b11000000;
+		}
+		if (IOExpdrDataReadBack == 0b11111111)
+		{
+			IOExpdrDataWrite = 0b11110000;
+		}
+
+		SwitchStateBB[1] = SwitchStateBB[0];
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
