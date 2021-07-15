@@ -114,8 +114,14 @@ int main(void)
   IOExpenderInit();
   GPIO_PinState SwitchStateBB[2]; 	// 2 states => present,last	//Blue Button
 
-  eepromExampleWriteFlag = 1;
   eepromExampleReadFlag = 1;
+
+  EEPROMReadExample(eepromDataReadBack, 1);
+//  EEPROMWriteExample();
+  HAL_Delay(100);
+  IOExpdrExampleWriteFlag = 1;
+  IOExpenderWritePinB(eepromDataReadBack);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -128,84 +134,78 @@ int main(void)
 		{
 			IOExpdrExampleReadFlag = 1;
 			IOExpdrExampleWriteFlag = 1;
-		}
-
-		IOExpenderReadPinA(&IOExpdrDataReadBack);
-		IOExpenderWritePinB(IOExpdrDataWrite);
-
-		// LED 2 broken >> use LED 5-8 instead >> swap wire
-		if (IOExpdrDataReadBack == 0b11110111)			//switch 1 LED 1
-		{
-			IOExpdrDataWrite = 0b01110000;
-		}
-		if (IOExpdrDataReadBack == 0b11111011)			//switch 2 LED 2
-		{
-			IOExpdrDataWrite = 0b10110000;
-		}
-		if (IOExpdrDataReadBack == 0b11111101)			//switch 3 LED 3
-		{
-			IOExpdrDataWrite = 0b11010000;
-		}
-		if (IOExpdrDataReadBack == 0b11111110)			//switch 4 LED 4
-		{
-			IOExpdrDataWrite = 0b11100000;
-		}
-		if (IOExpdrDataReadBack == 0b11110011)
-		{
-			IOExpdrDataWrite = 0b00110000;
-		}
-		if (IOExpdrDataReadBack == 0b11111001)
-		{
-			IOExpdrDataWrite = 0b10010000;
-		}
-		if (IOExpdrDataReadBack == 0b11110001)
-		{
-			IOExpdrDataWrite = 0b00010000;
-		}
-		if (IOExpdrDataReadBack == 0b11110101)
-		{
-			IOExpdrDataWrite = 0b01010000;
-		}
-		if (IOExpdrDataReadBack == 0b11110110)
-		{
-			IOExpdrDataWrite = 0b01100000;
-		}
-		if (IOExpdrDataReadBack == 0b11110000)
-		{
-			IOExpdrDataWrite = 0b00000000;
-		}
-		if (IOExpdrDataReadBack == 0b11110010)
-		{
-			IOExpdrDataWrite = 0b00100000;
-		}
-		if (IOExpdrDataReadBack == 0b11110100)
-		{
-			IOExpdrDataWrite = 0b01000000;
-		}
-		if (IOExpdrDataReadBack == 0b11111000)
-		{
-			IOExpdrDataWrite = 0b10000000;
-		}
-		if (IOExpdrDataReadBack == 0b11111010)
-		{
-			IOExpdrDataWrite = 0b10100000;
-		}
-		if (IOExpdrDataReadBack == 0b11111100)
-		{
-			IOExpdrDataWrite = 0b11000000;
-		}
-		if (IOExpdrDataReadBack == 0b11111111)
-		{
-			IOExpdrDataWrite = 0b11110000;
-		}
-
-		if (eepromExampleReadFlag == 1 || eepromExampleWriteFlag == 1)
-		{
+			IOExpenderReadPinA(&IOExpdrDataReadBack);
+			HAL_Delay(10);
+			// LED 2 broken >> use LED 5-8 instead >> swap wire
+			if (IOExpdrDataReadBack == 0b11110111)			//switch 1 LED 1
+			{
+				IOExpdrDataWrite = 0b01110000;
+			}
+			if (IOExpdrDataReadBack == 0b11111011)			//switch 2 LED 2
+			{
+				IOExpdrDataWrite = 0b10110000;
+			}
+			if (IOExpdrDataReadBack == 0b11111101)			//switch 3 LED 3
+			{
+				IOExpdrDataWrite = 0b11010000;
+			}
+			if (IOExpdrDataReadBack == 0b11111110)			//switch 4 LED 4
+			{
+				IOExpdrDataWrite = 0b11100000;
+			}
+			if (IOExpdrDataReadBack == 0b11110011)
+			{
+				IOExpdrDataWrite = 0b00110000;
+			}
+			if (IOExpdrDataReadBack == 0b11111001)
+			{
+				IOExpdrDataWrite = 0b10010000;
+			}
+			if (IOExpdrDataReadBack == 0b11110001)
+			{
+				IOExpdrDataWrite = 0b00010000;
+			}
+			if (IOExpdrDataReadBack == 0b11110101)
+			{
+				IOExpdrDataWrite = 0b01010000;
+			}
+			if (IOExpdrDataReadBack == 0b11110110)
+			{
+				IOExpdrDataWrite = 0b01100000;
+			}
+			if (IOExpdrDataReadBack == 0b11110000)
+			{
+				IOExpdrDataWrite = 0b00000000;
+			}
+			if (IOExpdrDataReadBack == 0b11110010)
+			{
+				IOExpdrDataWrite = 0b00100000;
+			}
+			if (IOExpdrDataReadBack == 0b11110100)
+			{
+				IOExpdrDataWrite = 0b01000000;
+			}
+			if (IOExpdrDataReadBack == 0b11111000)
+			{
+				IOExpdrDataWrite = 0b10000000;
+			}
+			if (IOExpdrDataReadBack == 0b11111010)
+			{
+				IOExpdrDataWrite = 0b10100000;
+			}
+			if (IOExpdrDataReadBack == 0b11111100)
+			{
+				IOExpdrDataWrite = 0b11000000;
+			}
+			if (IOExpdrDataReadBack == 0b11111111)
+			{
+				IOExpdrDataWrite = 0b11110000;
+			}
 			eepromDataReadBack = IOExpdrDataWrite;
+			IOExpenderWritePinB(eepromDataReadBack);
+			eepromExampleWriteFlag = 1;
+			EEPROMWriteExample();
 		}
-
-	  	EEPROMReadExample(eepromDataReadBack, 1);
-	  	EEPROMWriteExample();
 
 		SwitchStateBB[1] = SwitchStateBB[0];
     /* USER CODE END WHILE */
@@ -363,15 +363,16 @@ static void MX_GPIO_Init(void)
 void EEPROMWriteExample() {
 	if (eepromExampleWriteFlag && hi2c1.State == HAL_I2C_STATE_READY)
 	{
-		static uint8_t data = 0xff;
-		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x80, I2C_MEMADD_SIZE_16BIT, data, 1);
+		static uint8_t data[1] = {0xff};
+		data[0] = IOExpdrDataReadBack;
+		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x85, I2C_MEMADD_SIZE_16BIT, data, 1);
 		eepromExampleWriteFlag = 0;
 	}
 }
 void EEPROMReadExample(uint8_t *Rdata, uint16_t len) {
 	if (eepromExampleReadFlag && hi2c1.State == HAL_I2C_STATE_READY)
 	{
-		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x80, I2C_MEMADD_SIZE_16BIT, Rdata, len);
+		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x85, I2C_MEMADD_SIZE_16BIT, Rdata, len);
 		eepromExampleReadFlag = 0;
 	}
 }
