@@ -115,10 +115,11 @@ int main(void)
   GPIO_PinState SwitchStateBB[2]; 	// 2 states => present,last	//Blue Button
 
   eepromExampleReadFlag = 1;
+  HAL_Delay(10);
 
-  EEPROMReadExample(eepromDataReadBack, 1);
-//  EEPROMWriteExample();
+  EEPROMReadExample(&eepromDataReadBack, 1);
   HAL_Delay(100);
+
   IOExpdrExampleWriteFlag = 1;
   IOExpenderWritePinB(eepromDataReadBack);
 
@@ -204,6 +205,7 @@ int main(void)
 			eepromDataReadBack = IOExpdrDataWrite;
 			IOExpenderWritePinB(eepromDataReadBack);
 			eepromExampleWriteFlag = 1;
+			HAL_Delay(10);
 			EEPROMWriteExample();
 		}
 
@@ -364,7 +366,7 @@ void EEPROMWriteExample() {
 	if (eepromExampleWriteFlag && hi2c1.State == HAL_I2C_STATE_READY)
 	{
 		static uint8_t data[1] = {0xff};
-		data[0] = IOExpdrDataReadBack;
+		data[0] = IOExpdrDataWrite;
 		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x85, I2C_MEMADD_SIZE_16BIT, data, 1);
 		eepromExampleWriteFlag = 0;
 	}
