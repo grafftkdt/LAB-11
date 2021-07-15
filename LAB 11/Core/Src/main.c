@@ -53,9 +53,10 @@ uint8_t eepromExampleReadFlag = 0;
 uint8_t IOExpdrExampleWriteFlag = 0;
 uint8_t IOExpdrExampleReadFlag = 0;
 
-uint8_t eepromDataReadBack[4];
+uint8_t eepromDataReadBack;
 uint8_t IOExpdrDataReadBack;
-uint8_t IOExpdrDataWrite = 0b01010101;
+uint8_t IOExpdrDataWrite;
+
 
 /* USER CODE END PV */
 
@@ -112,14 +113,16 @@ int main(void)
   HAL_Delay(100);
   IOExpenderInit();
   GPIO_PinState SwitchStateBB[2]; 	// 2 states => present,last	//Blue Button
+
+  eepromExampleWriteFlag = 1;
+  eepromExampleReadFlag = 1;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  	EEPROMWriteExample();
-		EEPROMReadExample(eepromDataReadBack, 4);
+
 		SwitchStateBB[0] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);		//BlueButton >> PC13
 		if ( SwitchStateBB[1] == GPIO_PIN_SET && SwitchStateBB[0] == GPIO_PIN_RESET)		//Check pressing
 		{
@@ -195,6 +198,14 @@ int main(void)
 		{
 			IOExpdrDataWrite = 0b11110000;
 		}
+
+		if (eepromExampleReadFlag == 1 || eepromExampleWriteFlag == 1)
+		{
+			eepromDataReadBack = IOExpdrDataWrite;
+		}
+
+	  	EEPROMReadExample(eepromDataReadBack, 1);
+	  	EEPROMWriteExample();
 
 		SwitchStateBB[1] = SwitchStateBB[0];
     /* USER CODE END WHILE */
@@ -352,15 +363,15 @@ static void MX_GPIO_Init(void)
 void EEPROMWriteExample() {
 	if (eepromExampleWriteFlag && hi2c1.State == HAL_I2C_STATE_READY)
 	{
-		static uint8_t data[4] = { 0xff, 0x00, 0x55, 0xaa };
-		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x2C, I2C_MEMADD_SIZE_16BIT, data, 4);
+		static uint8_t data = 0xff;
+		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x80, I2C_MEMADD_SIZE_16BIT, data, 1);
 		eepromExampleWriteFlag = 0;
 	}
 }
 void EEPROMReadExample(uint8_t *Rdata, uint16_t len) {
 	if (eepromExampleReadFlag && hi2c1.State == HAL_I2C_STATE_READY)
 	{
-		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x2c, I2C_MEMADD_SIZE_16BIT, Rdata, len);
+		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x80, I2C_MEMADD_SIZE_16BIT, Rdata, len);
 		eepromExampleReadFlag = 0;
 	}
 }
